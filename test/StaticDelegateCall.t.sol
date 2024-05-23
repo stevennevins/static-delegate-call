@@ -43,19 +43,19 @@ contract StaticDelegateCallTest is Test {
     Implementation implementation = new Implementation();
     Logic logic = new Logic();
 
-    function test_WhenReadable_Read(uint256 returnValue) external {
+    function test_Read(uint256 returnValue) external {
         implementation.setValue(returnValue);
         uint256 result = IReadOnly(address(implementation)).read(address(logic), abi.encodeCall(Logic.read, ()));
         assertEq(returnValue, result);
     }
 
-    function test_RevertsWhenWrite_Read(uint256 returnValue) external {
+    function test_cannotCallWriteFunction(uint256 returnValue) external {
         implementation.setValue(returnValue);
         vm.expectRevert();
         IReadOnly(address(implementation)).read(address(logic), abi.encodeCall(Logic.write, ()));
     }
 
-    function test_RevertsWhenReverts_Read(uint256 returnValue) external {
+    function test_propagatesReverts(uint256 returnValue) external {
         implementation.setValue(returnValue);
         vm.expectRevert();
         IReadOnly(address(implementation)).read(address(logic), abi.encodeCall(Logic.fail, ()));
