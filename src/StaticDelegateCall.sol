@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.20;
 
-interface IStaticDelegateCallee {
-    function handleStaticDelegateCallAndRevert(address implementation, bytes memory callData) external view;
+interface IStaticDelegateCall {
+    function delegateCallAndRevert(address implementation, bytes memory callData) external view;
 }
 
 abstract contract StaticDelegateCaller {
-    function handleStaticDelegateCallAndRevert(address implementation, bytes memory callData) external {
+    function delegateCallAndRevert(address implementation, bytes memory callData) external {
         require(msg.sender == address(this), "Unauthorized caller");
         (bool success, bytes memory result) = implementation.delegatecall(callData);
 
@@ -15,10 +15,10 @@ abstract contract StaticDelegateCaller {
     }
 
     function _executeStaticDelegateCall(address implementation, bytes memory callData) internal view {
-        try IStaticDelegateCallee(address(this)).handleStaticDelegateCallAndRevert(implementation, callData) {
+        try IStaticDelegateCall(address(this)).delegateCallAndRevert(implementation, callData) {
             assert(false);
-        } catch (bytes memory result) {
-            (bool success, bytes memory resultData) = abi.decode(result, (bool, bytes));
+        } catch (bytes memory revertData) {
+            (bool success, bytes memory resultData) = abi.decode(revertData, (bool, bytes));
             if (!success) {
                 _revertWithEncodedData(resultData);
             }
