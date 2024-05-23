@@ -6,11 +6,11 @@ interface IStaticDelegateCall {
 }
 
 abstract contract StaticDelegateCaller {
-    error OnlyDelegateCall();
+    error Unauthorized();
 
     function delegateCallAndRevert(address to, bytes memory data) external {
         if (msg.sender != address(this)) {
-            revert OnlyDelegateCall();
+            revert Unauthorized();
         }
         (bool success, bytes memory result) = to.delegatecall(data);
 
