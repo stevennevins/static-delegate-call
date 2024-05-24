@@ -29,12 +29,14 @@ interface IReadOnly {
 }
 
 contract Implementation is IReadOnly, StaticDelegateCaller, Storage {
+    using LibStaticDelegateCall for address;
+
     function setValue(uint256 _value) external {
         value = _value;
     }
 
-    function read(address impl, bytes memory callData) external view returns (uint256) {
-        _executeStaticDelegateCall(impl, callData);
+    function read(address to, bytes memory data) external view returns (uint256) {
+        to.staticDelegateCall(data);
         assert(false);
     }
 }
