@@ -2,17 +2,17 @@
 pragma solidity 0.8.20;
 
 function _revertWithData(bytes memory data) pure {
-    assembly {
-        revert(add(data, 32), mload(data))
-    }
+    // prettier-ignore
+    assembly {revert(add(data, 32), mload(data))}
 }
 
 function _returnWithData(bytes memory data) pure {
-    assembly {
-        return(add(data, 32), mload(data))
-    }
+    // prettier-ignore
+    assembly {return(add(data, 32), mload(data))}
 }
 
+/// Having the separate interface allows us to use delegatecall which the compiler interprets it's usage as a potential modifier of state
+/// We can wrap with this view version of the function so that functions using the library can still use the restricted view keyword
 interface IStaticDelegateCall {
     function delegateCallAndRevert(address to, bytes memory data) external view;
 }
