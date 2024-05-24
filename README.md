@@ -1,13 +1,6 @@
-## Foundry
+## StaticDelegateCall Overview
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
-
-Foundry consists of:
-
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+The `StaticDelegateCall.sol` library and associated contracts enable contracts to delegatecall functions from other contracts without risking their own internal state from these calls. This is achieved by calling a special function which always reverts, but it reverts with the return data of the call. The contract has a try-catch so we can perform logic after the revert, this allows us to catch the revert data, and then transform the revert data back into the original return data from the delegatecall (if it was successful otherwise we bubble up the revert). This is particularly useful for scenarios where you are constrained by bytecode size limits in your contract and you still want to have rich view functions. Using this library you can have a separate contract that you delegatecal which mimics the storage layout of your main contract.  This allows you to extract logic that isn't essential to maintain state of your application, while still having logic for rich view methods for your UI.
 
 ## Documentation
 
@@ -16,51 +9,12 @@ https://book.getfoundry.sh/
 ## Usage
 
 ### Build
-
-```shell
-$ forge build
+```
+forge build
 ```
 
 ### Test
-
-```shell
-$ forge test
+```
+forge test
 ```
 
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
