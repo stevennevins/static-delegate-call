@@ -6,6 +6,8 @@ import "forge-std/console2.sol";
 
 import "../src/StaticDelegateCall.sol";
 
+/// Using this pattern with unstructured storage makes it simpler to account
+/// for a derived contract's storage layout
 contract UnstructuredStorage {
     struct StorageStruct {
         uint256 _value;
